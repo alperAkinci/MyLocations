@@ -18,6 +18,15 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
     var updatingLocation = false
     var lastLocationError : Error?
     
+    let geocoder = CLGeocoder()
+    var placemark : CLPlacemark?
+    var performingReverseGeocoding = false
+    var lastGeocodingError : Error?
+    
+    var timer : Timer?
+    
+    
+    
 //MARK: Outlets
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var latitudeLabel: UILabel!
@@ -28,6 +37,9 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
 
 //MARK: Actions
     @IBAction func getLocation(_ sender: UIButton) {
+        
+        placemark = nil
+        lastGeocodingError = nil
         
         let authStatus = CLLocationManager.authorizationStatus()
         
@@ -85,7 +97,7 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
         let newLocation = locations.last!
         print("didUpdateLocations : \(newLocation)")
         
-        // 1 If the time at which the given location object was determined is too long ago (5seconds in this case), then this is a so-called cached result.
+        // 1 If the time at which the given location object was determined is too long ago (5 seconds in this case), then this is a so-called cached result.
         if newLocation.timestamp.timeIntervalSinceNow < -5 {
             return
         }
@@ -94,6 +106,16 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
         if newLocation.horizontalAccuracy < 0 {
             return
         }
+        
+        
+        //This calculates the distance between the new reading and the previous reading, if there was one. We can use this distance to measure if our location updates are still improving.
+        //If there was no previous reading, then the distance is DBL_MAX. That is a built-in constant that represents the maximum value that a floating-point number can have.
+        var distance = CLLocationDistance(DBL_MAX)
+        if let location = location {
+            distance = newLocation.distance(from: location)
+        }
+
+        
         
         // 3 So if this is the very first location reading (location is nil) or the new location is more accurate than the previous reading, you continue to step 4. Otherwise you ignore this location update.
         // If the first one is true (location is nil), it will ignore the second condition. That’s called short circuiting.
@@ -108,9 +130,59 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
                 print("*** We're done!")
                 stopLocationManager()
                 configureGetButton()
+                
+                
+                //This forces a reverse geocoding for the final location, even if the app is already currently performing another geocoding request.
+                //You absolutely want the address for that final location, as that is the most accurate location you’ve found. But if some previous location was still being reverse geocoded, this step would normally be skipped.
+                //Simply by setting performingReverseGeocoding to false, you always force the geocoding to be done for this final coordinate.
+                if distance > 0 {
+                        performingReverseGeocoding = false
+                    }
+                
             }
+            
+            //6 The app should only perform a single reverse geocoding request at a time, so first you check whether it is not busy yet by looking at the performingReverseGeocoding variable. Then you start the geocoder.
+            if !performingReverseGeocoding{
+                print("*** Going to Geocode")
+                
+                performingReverseGeocoding = true
+                
+                geocoder.reverseGeocodeLocation(newLocation, completionHandler: { placemarks , error in
+                    //Closures are said to capture all the variables they use and self is one of them. You may immediately forget about that; just know that Swift requires that all captured variables are explicitly mentioned.
+                    print("*** Found placemarks \(placemarks) , error : \(error) ")
+                    self.lastGeocodingError = error
+                    
+                    /*
+                    if error == nil {
+                     if let p = placemarks {
+                        if !p.isEmpty {
+                    */
+                    if error == nil, let p = placemarks, !p.isEmpty {
+                        self.placemark = p.last!
+                    } else {
+                        self.placemark = nil
+                    }
+                    self.performingReverseGeocoding = false
+                    self.updateLabels()
+                })
+            }
+        
+        }else if distance < 1 {
+            //If the coordinate from this reading is not significantly different from the previous reading and it has been more than 10 seconds since you’ve received that original reading, then it’s a good point to hang up your hat and stop.
+            
+            //The distance between subsequent readings is never exactly 0. It may be something like 0.0017632. Rather than checking for equals to 0, it’s better to check for less than a certain distance, in this case one meter.
+            
+            let timeInterval = newLocation.timestamp.timeIntervalSince(location!.timestamp)
+
+                if timeInterval > 10 {
+                print("*** Force done!")
+                stopLocationManager()
+                updateLabels()
+                configureGetButton()
+                }
         }
-    }
+
+    }//end of didUpdateLocations func
     
     
 //MARK: - Convenience Methods 
@@ -134,6 +206,16 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
             messageLabel.text = ""
             tagButton.isHidden = false
             
+            if let placemark = placemark {
+                addressLabel.text = string(from: placemark)
+            } else if performingReverseGeocoding {
+                addressLabel.text = "Searching for Address..."
+            } else if lastGeocodingError != nil {
+                addressLabel.text = "Error Finding Address"
+            }else{
+                addressLabel.text = "No Address Found"
+            }
+        
         }else{
             
             latitudeLabel.text = ""
@@ -170,6 +252,10 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
             updatingLocation = true
+            
+            //set up a timer object that sends the “didTimeOut” message to self after 60 seconds; didTimeOut is the name of a method.
+            timer = Timer.scheduledTimer(timeInterval: 60, target: self,
+                                         selector: #selector(didTimeOut), userInfo: nil, repeats: false)
         }
     }
     
@@ -180,6 +266,11 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
             locationManager.stopUpdatingLocation()
             locationManager.delegate = nil
             updatingLocation = false
+            
+            //You have to cancel the timer in case the location manager is stopped before the time-out fires. This happens when an accurate enough location is found within(inside of) one minute after starting, or when the user tapped the Stop button.
+            if let timer = timer {
+                timer.invalidate()
+            }
         }
     }
     
@@ -190,5 +281,49 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
             getLocationButton.setTitle("Get My Location", for: .normal)
         }
     }
+    
+    func string(from placemark: CLPlacemark) -> String {
+        // 1
+        var line1 = ""
+        // 2
+        if let s = placemark.subThoroughfare {
+            line1 += s + " "
+        }
+        // 3
+        if let s = placemark.thoroughfare {
+            line1 += s }
+        // 4
+        var line2 = ""
+        if let s = placemark.country{
+            line2 += s + " "
+        }
+        if let s = placemark.locality {
+            line2 += s + " "
+        }
+        if let s = placemark.administrativeArea {
+            line2 += s + " "
+        }
+        if let s = placemark.postalCode {
+            line2 += s }
+        // 5
+        return line1 + "\n" + line2
+    }
+    
+    
+    //didTimeOut() is always called after one minute, whether you’ve obtained a valid location or not – unless stopLocationManager() cancels the timer first.
+    func didTimeOut() {
+        print("*** Time out")
+        
+        
+        //If after that one minute there still is no valid location, you stop the location manager, create your own error code, and update the screen.
+        if location == nil {
+            stopLocationManager()
+            lastLocationError = NSError(domain: "MyLocationsErrorDomain",
+                                        code: 1, userInfo: nil)
+            updateLabels()
+            configureGetButton()
+        }
+    }
+    
     
 }
