@@ -311,9 +311,6 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
             line1 += s }
         // 4
         var line2 = ""
-        if let s = placemark.country{
-            line2 += s + " "
-        }
         if let s = placemark.locality {
             line2 += s + " "
         }

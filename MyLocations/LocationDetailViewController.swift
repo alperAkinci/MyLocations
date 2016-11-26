@@ -26,14 +26,14 @@ private let dateFormatter : DateFormatter = {
     
 }()
 
-class LocationDetailViewController: UITableViewController {
+class LocationDetailViewController: UITableViewController{
 
     
     //MARK: - Globals
     
     var coordinate = CLLocationCoordinate2D(latitude: 0,longitude: 0)
     var placemark : CLPlacemark?
-    
+    var categoryName = "No Category"
     
     
     //MARK: - Outlets
@@ -58,7 +58,7 @@ class LocationDetailViewController: UITableViewController {
         super.viewDidLoad()
         
         descriptionTextView.text = " "
-        categoryLabel.text = " "
+        categoryLabel.text = categoryName
         latitudeLabel.text = String(format: "%.8f",coordinate.latitude)
         longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
         
@@ -70,6 +70,27 @@ class LocationDetailViewController: UITableViewController {
         
         dateLabel.text = format(date: Date())
     
+    }
+    
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "PickCategory" {
+            let controller = segue.destination as! CategoryPickerViewController
+            
+            controller.selectedCategoryName = categoryName
+        }
+        
+    }
+    
+    
+    // Unwind segue
+    @IBAction func categoryPickerDidPickCategory(_ segue: UIStoryboardSegue){
+    
+        let controller = segue.source as! CategoryPickerViewController
+        categoryName = controller.selectedCategoryName
+        categoryLabel.text = categoryName
     }
     
     //MARK: - Convenience Methods
@@ -97,59 +118,27 @@ class LocationDetailViewController: UITableViewController {
         return dateFormatter.string(from: date)
     }
 
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+    
+    
+    //MARK: - UITableViewDelegate
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        if indexPath.section == 0 && indexPath.row == 0{
+            //descriptionLabel cell
+            return 88
+        }else if indexPath.section == 2 && indexPath.row == 2 {
+            //addressLabel cell
+            addressLabel.frame.size = CGSize(
+                width: view.bounds.size.width - 115,
+                height: 10000)
+            addressLabel.sizeToFit()
+            addressLabel.frame.origin.x = view.bounds.size.width - addressLabel.frame.size.width - 15
+            return addressLabel.frame.size.height + 20
+        }else{
+            //all other cells
+            return 44
+        }
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
 }
