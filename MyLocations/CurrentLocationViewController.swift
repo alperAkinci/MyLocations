@@ -78,6 +78,23 @@ class CurrentLocationViewController: UIViewController,CLLocationManagerDelegate 
     }
     
     
+//MARK: Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "TagLocation"{
+        
+        let navigationController = segue.destination as! UINavigationController
+            
+        let locationDetailVC = navigationController.topViewController as! LocationDetailViewController
+            
+        locationDetailVC.placemark = placemark
+        locationDetailVC.coordinate = location!.coordinate
+            
+        }
+        
+        
+    }
     
 //MARK: - CLLocationManagerDelegate Methods
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

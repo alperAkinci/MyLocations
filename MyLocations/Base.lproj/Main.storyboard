@@ -61,7 +61,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Tag Location"/>
                                 <connections>
-                                    <segue destination="u5t-aW-hP3" kind="presentation" id="5pH-ff-ONL"/>
+                                    <segue destination="u5t-aW-hP3" kind="presentation" identifier="TagLocation" id="5pH-ff-ONL"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vW0-7s-QFw">
