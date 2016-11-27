@@ -69,7 +69,13 @@ class LocationDetailViewController: UITableViewController{
         }
         
         dateLabel.text = format(date: Date())
-    
+        
+        
+        //Speaking of the text view, once you’ve activated it there’s no way to get rid of the keyboard again. And because the keyboard takes up half of the screen that can be a bit annoying.
+        //It would be nice if the keyboard disappeared after you tapped anywhere else on the screen.
+        let gestureRecognizer = UIGestureRecognizer(target: self, action:#selector(hideKeyboard))
+        gestureRecognizer.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(gestureRecognizer)
     }
     
     // MARK: - Navigation
@@ -118,6 +124,24 @@ class LocationDetailViewController: UITableViewController{
         return dateFormatter.string(from: date)
     }
 
+    func hideKeyboard(_ gestureRecognizer : UIGestureRecognizer){
+        
+        // the point tapped in tableView
+        let point = gestureRecognizer.location(in: tableView)
+        //indexPath of tapped point
+        let indexPath = tableView.indexPathForRow(at: point)
+        
+        //if tapped point is description cell, dont hide keyboard
+        if indexPath != nil && indexPath!.section == 0 && indexPath!.row == 0 {
+            return
+        }
+        // Another way : if let indexPath = indexPath, indexPath.section != 0 &&indexPath.row != 0 {return}
+
+        
+        //resign first responder status
+        descriptionTextView.resignFirstResponder()
+        
+    }
     
     
     //MARK: - UITableViewDelegate
@@ -141,4 +165,23 @@ class LocationDetailViewController: UITableViewController{
         }
     }
     
+    
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        
+        //the selectible tableView cells are description and addPhoto cells 
+        if indexPath.section == 0 || indexPath.section == 1 {
+            return indexPath
+        }else{
+            return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        //When the user taps anywhere inside that first cell, the text view should activate, even if the tap wasn’t on the text view itself.
+        if indexPath.section == 0 && indexPath.row == 0{
+            descriptionTextView.becomeFirstResponder()
+        }
+    }
 }
