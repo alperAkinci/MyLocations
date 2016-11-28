@@ -27,6 +27,7 @@ class HudView: UIView{
         //It also sets view’s isUserInteractionEnabled property to false. While the HUD is showing you don’t want the user to interact with the screen anymore. The user has already pressed the Done button and the screen is in the process of closing.
         view.isUserInteractionEnabled = false
         
+        hudView.show(animated: animated)
         return hudView
     }
     
@@ -64,6 +65,43 @@ class HudView: UIView{
                 x: center.x - round(image.size.width / 2),
                 y: center.y - round(image.size.height / 2) - boxHeight / 8)
             image.draw(at: imagePoint)
+        }
+        
+        
+        
+        //When drawing text you first need to know how big the text is, so you can figure out where to position it.
+        //First, you create the UIFont object that you’ll use for the text. This is a “System” font of size 16. As of iOS 9, the system font is San Francisco (on iOS 8 and before it was Helvetica Neue.
+        //So in the dictionary from draw(), the NSFontAttributeName key is associated with the UIFont object, and the NSForegroundColorAttributeName key is associated with the UIColor object. In other words, the attribs dictionary describes what the text will look like.
+        //You use these attributes and the string from the text property to calculate how wide and tall the text will be. The result ends up in the textSize constant, which is of type CGSize. (As you can tell, CGPoint, CGSize, and CGRect are types you use a lot when making your own views.)
+        //Finally, you calculate where to draw the text (textPoint), and then draw it.
+        let attribs = [ NSFontAttributeName: UIFont.systemFont(ofSize: 16),
+                        NSForegroundColorAttributeName: UIColor.white ]
+        let textSize = text.size(attributes: attribs)
+        let textPoint = CGPoint(
+            x: center.x - round(textSize.width / 2),
+            y: center.y - round(textSize.height / 2) + boxHeight / 4)
+        text.draw(at: textPoint, withAttributes: attribs)
+        
+    }
+    
+    func show(animated : Bool){
+        if animated{
+            
+            // 1 - Setup the initial state of the view before the animation starts.Here you set alpha to 0, making the view fully transparent. You also set the transform to a scale factor of "1.3" . We’re not going to go into depth on transforms here, but basically this means the view is initially stretched out.
+            alpha = 0
+            transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+            
+            // 2 - Call UIView.animate(withDuration:...) to setup ananimation.You give this a closure that describes the animation.UIKit will animate the properties that you change inside the closure from their initial state to the final state.
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [], animations: {
+            
+                // 3 - Inside the closure,setup the new state of the view that it should have after the animation completes. You set alpha to 1, which means the HudView is now fully opaque. You also set the transform to the “identity” transform, restoring the scale back to normal. Because this code is part of a closure, you need to use self to refer to the HudView instance and its properties. That’s the rule for closures.
+                self.alpha = 1
+                self.transform = CGAffineTransform.identity
+            },
+            completion: nil)
+            
+              
+            
         }
     }
 }
