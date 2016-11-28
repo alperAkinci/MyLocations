@@ -49,6 +49,13 @@ class LocationDetailViewController: UITableViewController{
         //dismiss(animated: true, completion: nil)
         let hudView = HudView.hudView(inView: navigationController!.view, animated: true)
         hudView.text = "Tagged"
+        
+        let delayInSeconds = 0.6
+        
+        //tell the app to close the Tag Location screen after 0.6 seconds
+        afterDelay(delayInSeconds, closure: {
+            self.dismiss(animated: true, completion: nil)
+        })
     }
     @IBAction func cancel() {
         dismiss(animated: true, completion: nil)

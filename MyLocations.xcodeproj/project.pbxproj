@@ -10,6 +10,7 @@
 		4E0D46011DE89A2900F15A3E /* LocationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D46001DE89A2900F15A3E /* LocationDetailViewController.swift */; };
 		4E0D46031DE9C9D200F15A3E /* CategoryPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D46021DE9C9D200F15A3E /* CategoryPickerViewController.swift */; };
 		4E0D46071DEB02C800F15A3E /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D46061DEB02C800F15A3E /* HudView.swift */; };
+		4E0D46091DEC602600F15A3E /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D46081DEC602600F15A3E /* Functions.swift */; };
 		4E32CA5E1DDF57B400CDF048 /* CurrentLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32CA5D1DDF57B400CDF048 /* CurrentLocationViewController.swift */; };
 		4EFE09281DDF501200436BBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE09271DDF501200436BBF /* AppDelegate.swift */; };
 		4EFE092C1DDF501200436BBF /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE092B1DDF501200436BBF /* SecondViewController.swift */; };
@@ -22,6 +23,7 @@
 		4E0D46001DE89A2900F15A3E /* LocationDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationDetailViewController.swift; sourceTree = "<group>"; };
 		4E0D46021DE9C9D200F15A3E /* CategoryPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryPickerViewController.swift; sourceTree = "<group>"; };
 		4E0D46061DEB02C800F15A3E /* HudView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
+		4E0D46081DEC602600F15A3E /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		4E32CA5D1DDF57B400CDF048 /* CurrentLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentLocationViewController.swift; sourceTree = "<group>"; };
 		4EFE09241DDF501200436BBF /* MyLocations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyLocations.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EFE09271DDF501200436BBF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				4E0D46041DEB029D00F15A3E /* View */,
 				4E0D46051DEB02AA00F15A3E /* Controller */,
 				4EFE09271DDF501200436BBF /* AppDelegate.swift */,
+				4E0D46081DEC602600F15A3E /* Functions.swift */,
 				4EFE092B1DDF501200436BBF /* SecondViewController.swift */,
 				4EFE092D1DDF501200436BBF /* Main.storyboard */,
 				4EFE09301DDF501200436BBF /* Assets.xcassets */,
@@ -168,6 +171,7 @@
 				4E0D46011DE89A2900F15A3E /* LocationDetailViewController.swift in Sources */,
 				4EFE092C1DDF501200436BBF /* SecondViewController.swift in Sources */,
 				4E0D46071DEB02C800F15A3E /* HudView.swift in Sources */,
+				4E0D46091DEC602600F15A3E /* Functions.swift in Sources */,
 				4E32CA5E1DDF57B400CDF048 /* CurrentLocationViewController.swift in Sources */,
 				4E0D46031DE9C9D200F15A3E /* CategoryPickerViewController.swift in Sources */,
 				4EFE09281DDF501200436BBF /* AppDelegate.swift in Sources */,
