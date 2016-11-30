@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreLocation
-
+import CoreData
 //DateFormatter is a relatively expensive object to create. In other words, it takes quite long to initialize this object. If you do that many times over then it may slow down your app (and drain the phone’s battery faster).
 //It is better to create DateFormatter just once and then re-use that same object over and over. The trick is that you won’t create the DateFormatter object until the app actually needs it. This principle is called "lazy loading" and it’s a very important pattern for iOS apps. The work that you don’t do won’t cost any battery power.
 //In addition, you’ll only ever create one instance of DateFormatter. The next time you need to use DateFormatter you won’t make a new instance but re-use the existing one.
@@ -34,6 +34,7 @@ class LocationDetailViewController: UITableViewController{
     var coordinate = CLLocationCoordinate2D(latitude: 0,longitude: 0)
     var placemark : CLPlacemark?
     var categoryName = "No Category"
+    var managedObjectContext : NSManagedObjectContext!
     
     
     //MARK: - Outlets
@@ -50,12 +51,37 @@ class LocationDetailViewController: UITableViewController{
         let hudView = HudView.hudView(inView: navigationController!.view, animated: true)
         hudView.text = "Tagged"
         
-        let delayInSeconds = 0.6
+        let date = Date()
         
-        //tell the app to close the Tag Location screen after 0.6 seconds
-        afterDelay(delayInSeconds, closure: {
-            self.dismiss(animated: true, completion: nil)
-        })
+        
+        //1 - First,you create a new Location instance. Because this is a managed object, you have to use its init(context:) method. You can’t just write Location() because then the managedObjectContext won’t know about the new object.
+        let location = Location(context: managedObjectContext)
+        
+        //2 - Once you have created the Location instance,you can use it like any other object. Here you set its properties to whatever the user entered in the screen.
+        location.category = categoryName
+        location.date = date
+        location.latitude = coordinate.latitude
+        location.longitude = coordinate.longitude
+        location.locationDescription = descriptionTextView.text
+        location.placemark = placemark
+        
+        
+        // 3 - You now have a new Location object whose properties are all filled in, but if you were to look in the data store at this point you’d still see no objects there. That won’t happen until you save() the context.
+        // Info : Saving takes any objects that were added to the context, or any managed objects that had their contents changed, and permanently writes these changes into the data store. That’s why they call the context the “scratchpad”; its changes aren’t persisted until you save them.
+        do{
+            // any method that can potentially fail must have the try keyword in front of it. And that method call with the try keyword must be inside a do-catch block.
+            try managedObjectContext.save()
+            
+            //tell the app to close the Tag Location screen after 0.6 seconds
+            afterDelay(0.6, closure: {
+                self.dismiss(animated: true, completion: nil)
+            })
+        
+        }catch{
+            fatalCoreDataError(error)
+        }
+        
+        
     }
     @IBAction func cancel() {
         dismiss(animated: true, completion: nil)

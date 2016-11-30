@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    
+        
+    
+        //In order to get a reference to the CurrentLocationViewController you first have to find the UITabBarController and then look at its viewControllers array.
+        let tabBarController = window!.rootViewController as! UITabBarController
+        
+        if let tabBarViewControllers = tabBarController.viewControllers{
+        
+            let currentLocationVC = tabBarViewControllers[0] as! CurrentLocationViewController
+            
+            currentLocationVC.managedObjectContext = managedObjectContext
+            
+        }
+        
+        
+        listenForFatalCoreDataNotifications()
+        
+        
         return true
     }
 
@@ -41,6 +59,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    
+    //Loading data model
+    //This is the code you need to load the data model that you’ve defined earlier, and to connect it to an SQLite data store.
+    //You instantiate a new NSPersistentContainer object with the name of the data model you created earlier, "DataModel". Then you tell it to loadPersistentStores(), which loads the data from the database into memory and sets up the Core Data stack.
+     lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "DataModel")
+        container.loadPersistentStores(completionHandler: {
+            storeDescription, error in
+            if let error = error {
+                fatalError("Could load data store: \(error)")
+            }
+        })
+        return container
+    }()
+    
+    
+    //The goal here is to create a so-called NSManagedObjectContext object. That is the object you’ll use to talk to Core Data.
+    //To get the NSManagedObjectContext that we’re after, you can simply ask the persistentContainer for its viewContext property.
+     lazy var managedObjectContext: NSManagedObjectContext = self.persistentContainer.viewContext
 
+    
+    func listenForFatalCoreDataNotifications() {
+        // 1 - Tell Notification Center that you want to be notified when ever a My ManagedObjectContextSaveDidFailNotification is posted. The actual code that is performed when that happens sits in a closure following "using:".
+        NotificationCenter.default.addObserver(
+            forName: MyManagedObjectContextSaveDidFailNotification,
+            object: nil, queue: OperationQueue.main, using: { notification in
+                // 2
+                let alert = UIAlertController(
+                    title: "Internal Error",
+                    message:
+                    "There was a fatal error in the app and it cannot continue.\n\n"
+                        + "Press OK to terminate the app. Sorry for the inconvenience.",
+                    preferredStyle: .alert)
+                
+                // 3 -  The closure of UIAlertAction creates an NSException object to terminate the app.That’s a bit nicer and it provides more information to the crash log.
+                let action = UIAlertAction(title: "OK", style: .default) { _ in
+                    let exception = NSException(
+                        name: NSExceptionName.internalInconsistencyException,
+                        reason: "Fatal Core Data error", userInfo: nil)
+                    exception.raise()
+                }
+                alert.addAction(action)
+                // 4
+                self.viewControllerForShowingAlert().present(alert, animated: true,completion: nil)
+
+        })
+    }
+    // 5 - To show the alert with present(animated,completion)you need a view controller that is currently visible, so this helper method finds one that is. Unfortunately you can’t simply use the window’s rootViewController – in this app that is the tab bar controller – because it will be hidden when the Location Details screen is open.
+        func viewControllerForShowingAlert() -> UIViewController {
+        let rootViewController = self.window!.rootViewController!
+        if let presentedViewController =
+            rootViewController.presentedViewController {
+            return presentedViewController
+        } else {
+            return rootViewController
+        }
+    }
+    
 }
 

@@ -88,9 +88,9 @@
 		4EFE09261DDF501200436BBF /* MyLocations */ = {
 			isa = PBXGroup;
 			children = (
+				4EFE09271DDF501200436BBF /* AppDelegate.swift */,
 				4E0D46041DEB029D00F15A3E /* View */,
 				4E0D46051DEB02AA00F15A3E /* Controller */,
-				4EFE09271DDF501200436BBF /* AppDelegate.swift */,
 				4E0D46081DEC602600F15A3E /* Functions.swift */,
 				4EFE092B1DDF501200436BBF /* SecondViewController.swift */,
 				4E0D460D1DECC66300F15A3E /* Location+CoreDataClass.swift */,
