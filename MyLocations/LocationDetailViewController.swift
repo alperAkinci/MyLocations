@@ -34,7 +34,25 @@ class LocationDetailViewController: UITableViewController{
     var coordinate = CLLocationCoordinate2D(latitude: 0,longitude: 0)
     var placemark : CLPlacemark?
     var categoryName = "No Category"
+    var locationDescription = ""
+    var date = Date()
     var managedObjectContext : NSManagedObjectContext!
+    
+    var locationToEdit : Location? {
+        didSet{
+            
+            if let location = locationToEdit {
+                categoryName = location.category
+                coordinate = CLLocationCoordinate2D(latitude: location.latitude,
+                                                    longitude: location.longitude)
+                placemark = location.placemark
+                locationDescription = location.locationDescription
+                date = location.date
+            }
+        
+        }
+    }
+    
     
     
     //MARK: - Outlets
@@ -49,15 +67,24 @@ class LocationDetailViewController: UITableViewController{
     @IBAction func done() {
         //dismiss(animated: true, completion: nil)
         let hudView = HudView.hudView(inView: navigationController!.view, animated: true)
-        hudView.text = "Tagged"
-        
-        let date = Date()
+        let location : Location
         
         
-        //1 - First,you create a new Location instance. Because this is a managed object, you have to use its init(context:) method. You can’t just write Location() because then the managedObjectContext won’t know about the new object.
-        let location = Location(context: managedObjectContext)
+        if let temp = locationToEdit{
+            
+            hudView.text = "Updated"
+            location = temp
         
-        //2 - Once you have created the Location instance,you can use it like any other object. Here you set its properties to whatever the user entered in the screen.
+        }else{
+        
+            hudView.text = "Tagged"
+            
+            //1 - First,you create a new Location instance. Because this is a managed object, you have to use its init(context:) method. You can’t just write Location() because then the managedObjectContext won’t know about the new object.
+            location = Location(context: managedObjectContext)
+        }
+        
+    
+        //2 - Once you have created new Location instance or use the same Location instance,you can use it like any other object. Here you set its properties to whatever the user entered in the screen.
         location.category = categoryName
         location.date = date
         location.latitude = coordinate.latitude
@@ -66,7 +93,7 @@ class LocationDetailViewController: UITableViewController{
         location.placemark = placemark
         
         
-        // 3 - You now have a new Location object whose properties are all filled in, but if you were to look in the data store at this point you’d still see no objects there. That won’t happen until you save() the context.
+        // 3 - You now have Location object whose properties are all filled in, but if you were to look in the data store at this point you’d still see no objects there. That won’t happen until you save() the context.
         // Info : Saving takes any objects that were added to the context, or any managed objects that had their contents changed, and permanently writes these changes into the data store. That’s why they call the context the “scratchpad”; its changes aren’t persisted until you save them.
         do{
             // any method that can potentially fail must have the try keyword in front of it. And that method call with the try keyword must be inside a do-catch block.
@@ -92,7 +119,11 @@ class LocationDetailViewController: UITableViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        descriptionTextView.text = " "
+        if let _ = locationToEdit{
+            title = "Edit Location"
+        }
+        
+        descriptionTextView.text = locationDescription
         categoryLabel.text = categoryName
         latitudeLabel.text = String(format: "%.8f",coordinate.latitude)
         longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
