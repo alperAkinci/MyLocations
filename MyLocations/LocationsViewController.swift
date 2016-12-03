@@ -10,21 +10,20 @@ import UIKit
 import CoreLocation
 import CoreData
 
-class LocationsViewController: UITableViewController {
+class LocationsViewController: UITableViewController{
 
     var managedObjectContext : NSManagedObjectContext!
-    var locations = [Location]()
+    //var locations = [Location]()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
+    lazy var fetchedResultsController : NSFetchedResultsController<Location> = {
+        
         // Get all Location objects from the data store and sort them by date.
         
         // 1 - The NSFetchRequestis the object that describes which objects you’re going to fetch from the data store. To retrieve an object that you previously saved to the data store, you create a fetch request that describes the search parameters of the object – or multiple objects – that you’re looking for.
         // info : The < > mean that NSFetchRequest is a generic. Recall that arrays are also generics, because to create an array you specify the type of objects that go into the array, either using the shorthand notation [Location], or the longer Array<Location>.To use an NSFetchRequest, you need to tell it what type of objects you’re going to be fetching. Here, you create an NSFetchRequest<Location> so that the result of fetch() is an array of Location objects.
         
         let fetchRequest = NSFetchRequest<Location>()
-
+        
         // 2 - Here you tell the fetch request you’re looking for Location entities
         let entity = Location.entity()
         fetchRequest.entity = entity
@@ -34,33 +33,77 @@ class LocationsViewController: UITableViewController {
         fetchRequest.sortDescriptors = [sortDescripter]
         
         
-        // 4 - Now that you have the fetch request,you can tell the context to execute it.The fetch() method returns an array with the sorted objects, or throws an error in case something went wrong. That’s why this happens inside a do-try-catch block.
-        do {
-            locations = try managedObjectContext.fetch(fetchRequest)
-        } catch {
-            fatalCoreDataError(error)
-        }
+        //The fetch batch size setting allows you to tweak how many objects will be fetched at a time.
+        fetchRequest.fetchBatchSize = 20
         
+        
+        //The cacheName needs to be a unique name that NSFetchedResultsController uses to cache the search results. It keeps this cache around even after your app quits, so the next time the fetch request is lightning fast, as the NSFetchedResultsController doesn’t have to make a round-trip to the database but can simply read from the cache.
+        let fetchedResultsController = NSFetchedResultsController(
+                                                    fetchRequest: fetchRequest,
+                                                    managedObjectContext: self.managedObjectContext,
+                                                    sectionNameKeyPath: nil,
+                                                    cacheName: "Locations")
+    
+        //Through this delegate the view controller is informed that objects have been changed, added or deleted.
+        fetchedResultsController.delegate = self
+    
+        return fetchedResultsController
+    }()
+    
+    
+// MARK: - View Controller Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        //Every view controller has a built-in Edit button that can be accessed through the editButtonItem property. Tapping that button puts the table in editing mode:
+        navigationItem.rightBarButtonItem = editButtonItem
+        performFetch()
+        
+    }
+    
+    
+    //The deinit method is invoked when this view controller is destroyed. It may not strictly be necessary to nil out the delegate here, but it’s a bit of defensive programming that won’t hurt. (Note that in this app the LocationsViewController will never actually be deallocated because it’s one of the top-level view controllers in the tab bar. Still, it’s good to get into the habit of writing deinit methods.)
+
+    deinit {
+        
+        //It’s always a good idea to explicitly set the delegate to nil when you no longer need the NSFetchedResultsController, just so you don’t get any more notifications that were still pending.
+        fetchedResultsController.delegate = nil
     }
 
     
     // MARK: - Table view data source
 
-
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return locations.count
+        //The fetched results controller’s sections property returns an array of NSFetchedResultsSectionInfo objects that describe each section of the table view. The number of rows is found in the section info’s numberOfObjects property.
+        let sectionInfo = fetchedResultsController.sections![section]
+        return sectionInfo.numberOfObjects
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Location Cell", for: indexPath) as! LocationCell
         
-        let location = locations[indexPath.row]
+        //Instead of looking into the locations array like you did before, you now ask the fetchedResultsController for the object at the requested index-path. Because it is designed to work closely together with table views, NSFetchedResultsController knows how to deal with index-paths, so that’s very convenient.
+        let location = fetchedResultsController.object(at: indexPath)
         cell.configure(for: location)
         
         return cell
+    }
+    
+    //  As soon as you implement this method in your view controller, it enables swipe-to-delete.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete{
+            
+            //Get the Location object from the selected row and then tells the context to delete that object. This will trigger the NSFetchedResultsController to send a notification to the delegate (NSFetchedResultsChangeDelete), which then removes the corresponding row from the table.
+            let location = fetchedResultsController.object(at: indexPath)
+            managedObjectContext.delete(location)
+            
+            do {
+                try managedObjectContext.save()
+            } catch {
+                fatalCoreDataError(error)
+            }
+        }
     }
     
 
@@ -78,7 +121,7 @@ class LocationsViewController: UITableViewController {
             
             if let indexPath = tableView.indexPath(for: sender as! UITableViewCell){
                 
-                let location = locations[indexPath.row]
+                let location = fetchedResultsController.object(at: indexPath)
                 locationDetailVC.locationToEdit = location
                 
             }
@@ -89,6 +132,29 @@ class LocationsViewController: UITableViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
+    
+    // MARK: - Convenience Methods
+    
+    
+    func performFetch(){
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalCoreDataError(error)
+        }
+        
+    }
+    /*
+     //Fetching before use of NSFetchedResultsViewController
+     //  you have the fetch request,you can tell the context to execute it.The fetch() method returns an array with the sorted objects, or throws an error in case something went wrong. That’s why this happens inside a do-try-catch block.
+     do {
+     locations = try managedObjectContext.fetch(fetchRequest)
+     } catch {
+     fatalCoreDataError(error)
+     }
+     */
+
     
 
 }
