@@ -29,8 +29,9 @@ class LocationsViewController: UITableViewController{
         fetchRequest.entity = entity
         
         // 3 - The NSSortDescriptor tells the fetch request to sort on the date attribute,in ascending order. In order words, the Location objects that the user added first will be at the top of the list. You can sort on any attribute here (later in this tutorial you’ll sort on the Location’s category as well).
-        let sortDescripter = NSSortDescriptor(key: "date", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescripter]
+        let sortDescripter1 = NSSortDescriptor(key: "category", ascending: true)
+        let sortDescripter2 = NSSortDescriptor(key: "date", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescripter1,sortDescripter2]
         
         
         //The fetch batch size setting allows you to tweak how many objects will be fetched at a time.
@@ -38,10 +39,12 @@ class LocationsViewController: UITableViewController{
         
         
         //The cacheName needs to be a unique name that NSFetchedResultsController uses to cache the search results. It keeps this cache around even after your app quits, so the next time the fetch request is lightning fast, as the NSFetchedResultsController doesn’t have to make a round-trip to the database but can simply read from the cache.
+        
+        //sectionNameKeyPath parameter changed to "category", which means the fetched results controller will group the search results based on the value of the category attribute.
         let fetchedResultsController = NSFetchedResultsController(
                                                     fetchRequest: fetchRequest,
                                                     managedObjectContext: self.managedObjectContext,
-                                                    sectionNameKeyPath: nil,
+                                                    sectionNameKeyPath: "category",
                                                     cacheName: "Locations")
     
         //Through this delegate the view controller is informed that objects have been changed, added or deleted.
@@ -71,6 +74,22 @@ class LocationsViewController: UITableViewController{
 
     
     // MARK: - Table view data source
+    
+    
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return fetchedResultsController.sections!.count
+    }
+    
+    //configuring title of sections
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        //You ask the fetcher object for a list of the sections, which is an array of NSFetchedResultsSectionInfo objects, and then look inside that array to find out how many sections there are and what their names are.
+        
+        //configuring sections titles
+        let sectionInfo = fetchedResultsController.sections![section]
+        return sectionInfo.name
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //The fetched results controller’s sections property returns an array of NSFetchedResultsSectionInfo objects that describe each section of the table view. The number of rows is found in the section info’s numberOfObjects property.
