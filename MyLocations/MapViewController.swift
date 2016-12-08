@@ -10,13 +10,17 @@ import UIKit
 import MapKit
 import CoreData
 
-class MapViewController: UIViewController {
+
+//make sure you connected the view controller as the delegate of the map view in the storyboard
+class MapViewController: UIViewController{
+    
     
     @IBOutlet weak var mapView: MKMapView!
     
     var managedObjectContext: NSManagedObjectContext!
     var locations = [Location]()
 
+// MARK: - Actions
     @IBAction func showUser() {
         
         //When you press the User button, it zooms in the map to a region that is 1000 by 1000 meters (a little more than half a mile in both directions) around the user’s position.
@@ -34,6 +38,8 @@ class MapViewController: UIViewController {
         
     }
     
+// MARK: - View Controller Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,9 +51,10 @@ class MapViewController: UIViewController {
         }
     }
     
+
+// MARK: - Convenience Methods
     
-    
-    func updateLocations() {
+    func updateLocations(){
         
         // Why we remove annotation?
         // The idea is that updateLocations() will be executed every time there is a change in the data store. How you’ll do that is of later concern, but the point is that when this happens the locations array may already exist and may contain Location objects. If so, you first remove the pins for these old objects with removeAnnotations().
@@ -115,9 +122,27 @@ class MapViewController: UIViewController {
         }
         return mapView.regionThatFits(region)
     }
+    
+    
+    //In this case the sender will be the (i) button. That’s why the type of the sender parameter is UIButton.
+    func showLocationDetails(_ sender: UIButton){
+        performSegue(withIdentifier: "EditLocation", sender: sender)
+    }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "EditLocation"{
+            
+            // get the Location object to edit from the locations array, using the tag property of the sender button as the index in that array.
+            let navigationController = segue.destination
+                as! UINavigationController
+            let controller = navigationController.topViewController
+                as! LocationDetailViewController
+            controller.managedObjectContext = managedObjectContext
+            let button = sender as! UIButton
+            let location = locations[button.tag]
+            controller.locationToEdit = location
+            
+        }
+    }
 }
 
-extension MapViewController: MKMapViewDelegate {
-
-}

@@ -14,10 +14,11 @@
 		4E0D460C1DECAF0100F15A3E /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D460A1DECAF0100F15A3E /* DataModel.xcdatamodeld */; };
 		4E0D460F1DECC66300F15A3E /* Location+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D460D1DECC66300F15A3E /* Location+CoreDataClass.swift */; };
 		4E0D46101DECC66300F15A3E /* Location+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0D460E1DECC66300F15A3E /* Location+CoreDataProperties.swift */; };
-		4E17F89D1DF36BE00011CB10 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E17F89C1DF36BE00011CB10 /* Extensions.swift */; };
+		4E17F89D1DF36BE00011CB10 /* LocationsViewController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E17F89C1DF36BE00011CB10 /* LocationsViewController+Delegate.swift */; };
 		4E17F8A01DF59A560011CB10 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E17F89F1DF59A560011CB10 /* MapKit.framework */; };
 		4E32CA5E1DDF57B400CDF048 /* CurrentLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32CA5D1DDF57B400CDF048 /* CurrentLocationViewController.swift */; };
 		4E68D0031DF6101D004A058D /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E68D0021DF6101D004A058D /* MapViewController.swift */; };
+		4E68D0051DF99FAC004A058D /* MapViewController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E68D0041DF99FAC004A058D /* MapViewController+Delegate.swift */; };
 		4EA4F7891DF05476004A8EFB /* LocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA4F7881DF05476004A8EFB /* LocationsViewController.swift */; };
 		4EA4F78B1DF170A1004A8EFB /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA4F78A1DF170A1004A8EFB /* LocationCell.swift */; };
 		4EFE09281DDF501200436BBF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE09271DDF501200436BBF /* AppDelegate.swift */; };
@@ -34,10 +35,11 @@
 		4E0D460B1DECAF0100F15A3E /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		4E0D460D1DECC66300F15A3E /* Location+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Location+CoreDataClass.swift"; sourceTree = "<group>"; };
 		4E0D460E1DECC66300F15A3E /* Location+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Location+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		4E17F89C1DF36BE00011CB10 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		4E17F89C1DF36BE00011CB10 /* LocationsViewController+Delegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LocationsViewController+Delegate.swift"; sourceTree = "<group>"; };
 		4E17F89F1DF59A560011CB10 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		4E32CA5D1DDF57B400CDF048 /* CurrentLocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentLocationViewController.swift; sourceTree = "<group>"; };
 		4E68D0021DF6101D004A058D /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		4E68D0041DF99FAC004A058D /* MapViewController+Delegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapViewController+Delegate.swift"; sourceTree = "<group>"; };
 		4EA4F7881DF05476004A8EFB /* LocationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationsViewController.swift; sourceTree = "<group>"; };
 		4EA4F78A1DF170A1004A8EFB /* LocationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
 		4EFE09241DDF501200436BBF /* MyLocations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyLocations.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,7 +78,9 @@
 				4E0D46001DE89A2900F15A3E /* LocationDetailViewController.swift */,
 				4E0D46021DE9C9D200F15A3E /* CategoryPickerViewController.swift */,
 				4EA4F7881DF05476004A8EFB /* LocationsViewController.swift */,
+				4E17F89C1DF36BE00011CB10 /* LocationsViewController+Delegate.swift */,
 				4E68D0021DF6101D004A058D /* MapViewController.swift */,
+				4E68D0041DF99FAC004A058D /* MapViewController+Delegate.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -111,7 +115,6 @@
 			children = (
 				4EFE09271DDF501200436BBF /* AppDelegate.swift */,
 				4E0D46081DEC602600F15A3E /* Functions.swift */,
-				4E17F89C1DF36BE00011CB10 /* Extensions.swift */,
 				4E0D460D1DECC66300F15A3E /* Location+CoreDataClass.swift */,
 				4E0D460E1DECC66300F15A3E /* Location+CoreDataProperties.swift */,
 				4E0D46041DEB029D00F15A3E /* View */,
@@ -211,8 +214,9 @@
 				4E0D46091DEC602600F15A3E /* Functions.swift in Sources */,
 				4E68D0031DF6101D004A058D /* MapViewController.swift in Sources */,
 				4EA4F78B1DF170A1004A8EFB /* LocationCell.swift in Sources */,
-				4E17F89D1DF36BE00011CB10 /* Extensions.swift in Sources */,
+				4E17F89D1DF36BE00011CB10 /* LocationsViewController+Delegate.swift in Sources */,
 				4E32CA5E1DDF57B400CDF048 /* CurrentLocationViewController.swift in Sources */,
+				4E68D0051DF99FAC004A058D /* MapViewController+Delegate.swift in Sources */,
 				4E0D460F1DECC66300F15A3E /* Location+CoreDataClass.swift in Sources */,
 				4E0D46031DE9C9D200F15A3E /* CategoryPickerViewController.swift in Sources */,
 				4EFE09281DDF501200436BBF /* AppDelegate.swift in Sources */,

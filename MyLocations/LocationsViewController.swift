@@ -15,6 +15,7 @@ class LocationsViewController: UITableViewController{
     var managedObjectContext : NSManagedObjectContext!
     //var locations = [Location]()
     
+    
     lazy var fetchedResultsController : NSFetchedResultsController<Location> = {
         
         // Get all Location objects from the data store and sort them by date.

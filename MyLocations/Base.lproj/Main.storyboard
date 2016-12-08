@@ -94,7 +94,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2284" y="-869"/>
+            <point key="canvasLocation" x="2284" y="-807"/>
         </scene>
         <!--Location Detail-->
         <scene sceneID="ybg-6c-YbZ">
@@ -303,7 +303,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K9N-bB-IaO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5098" y="-528"/>
+            <point key="canvasLocation" x="5059" y="19"/>
         </scene>
         <!--Category Picker View Controller-->
         <scene sceneID="Qfb-fu-sdd">
@@ -344,7 +344,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TY3-dB-4Ig" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="jSA-M8-L4i" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="6041" y="-528"/>
+            <point key="canvasLocation" x="6000" y="19"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
@@ -431,6 +431,9 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SHI-Pk-jhg">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="H3B-ja-DK1" id="0Bo-Je-xv9"/>
+                                </connections>
                             </mapView>
                             <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pGO-Jy-Rgd">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
@@ -456,11 +459,12 @@
                     <tabBarItem key="tabBarItem" title="Map" id="3aO-Iz-Yli"/>
                     <connections>
                         <outlet property="mapView" destination="SHI-Pk-jhg" id="oLB-qM-Pp1"/>
+                        <segue destination="u5t-aW-hP3" kind="presentation" identifier="EditLocation" id="BjL-7M-lxB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ehJ-ld-MCG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1860" y="868.30985915492954"/>
+            <point key="canvasLocation" x="2284" y="817"/>
         </scene>
         <!--Locations-->
         <scene sceneID="BMq-vn-tAz">
@@ -495,7 +499,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UCX-YK-gfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4099" y="-528"/>
+            <point key="canvasLocation" x="4028" y="20"/>
         </scene>
     </scenes>
     <resources>
@@ -503,6 +507,6 @@
         <image name="second" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="5gN-DI-4BX"/>
+        <segue reference="BjL-7M-lxB"/>
     </inferredMetricsTieBreakers>
 </document>
