@@ -452,6 +452,9 @@
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
+                                <connections>
+                                    <outlet property="delegate" destination="H3B-ja-DK1" id="KHe-s4-nda"/>
+                                </connections>
                             </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

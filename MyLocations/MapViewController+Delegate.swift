@@ -62,3 +62,13 @@ extension MapViewController: MKMapViewDelegate {
 
     
 }
+
+
+// Fixing gap issue between navigation bar and top of screen
+extension MapViewController: UINavigationBarDelegate {
+    
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .topAttached
+    }
+
+}

@@ -16,9 +16,30 @@ class MapViewController: UIViewController{
     
     
     @IBOutlet weak var mapView: MKMapView!
-    
-    var managedObjectContext: NSManagedObjectContext!
     var locations = [Location]()
+    
+    /*
+    *** Using notifications of Core Data ***
+    -As soon as managedObjectContext is given a value – which happens in AppDelegate during app startup – the didSet block tells the NotificationCenter to add an observer for the NSManagedObjectContextObjectsDidChange notification.
+    -This notification with the very long name is sent out by the managedObjectContext whenever the data store changes. 
+    
+    *** Whats happening inside the closure ? ***
+    -You just call updateLocations() to fetch all the Location objects again. This throws away all the old pins and it makes new pins for all the newly fetched Location objects. Granted, it’s not a very efficient method if there are hundreds of annotation objects, but for now it gets the job done.
+     -You use if self.isViewLoaded to make sure updateLocations() only gets called when the map view is loaded.Because this screen sits in a tab, the view from MapViewController does not actually get loaded from the storyboard until the user switches to the Map tab.So the view may not have been loaded yet when the user tags a new location. In that case it makes no sense to call updateLocations() – it could even crash the app because the MKMapView object doesn’t exist yet at that point!
+    
+    */
+    var managedObjectContext: NSManagedObjectContext! {
+        didSet {
+            NotificationCenter.default.addObserver(forName:
+                Notification.Name.NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: OperationQueue.main) { notification in
+                
+                if self.isViewLoaded {
+                            self.updateLocations()
+                    }
+                }
+        }//end of didSet
+    }
+    
 
 // MARK: - Actions
     @IBAction func showUser() {
